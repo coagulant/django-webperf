@@ -1,8 +1,8 @@
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
+from os import path
+import codecs
+from setuptools import setup, find_packages
+
+read = lambda filepath: codecs.open(filepath, 'r', 'utf-8').read()
 
 tests_require = [
     'Django>=1.2,<1.4',
@@ -19,7 +19,7 @@ setup(
     url='https://github.com/futurecolors/django-webperf',
     license='MIT',
     description="A collection of stuff to improve django web performance.",
-    long_description=open('README.rst').read(),
+    long_description=read(path.join(path.dirname(__file__), 'README.rst')),
     install_requires=[
         "django-appconf==0.4.1"
     ],
