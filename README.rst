@@ -47,3 +47,15 @@ WEBPERF_DOMAINS_NUMBER
 Number of domains you want to use to split your media content.
 
     Don't use too many domains, becasue it will increase DNS lookup time.
+
+
+Running tests
+-------------
+
+Preferred way is (if you're using setuptools)::
+
+    python setup.py test
+
+Other way you can just run in manually (but make sure you install mock library)::
+
+    python runtests.py
