@@ -11,11 +11,11 @@ tests_require = [
 
 setup(
     name='django-webperf',
-    version='0.1dev',
+    version='0.1',
     author='Ilya Baryshev',
     author_email='baryshev@gmail.com',
     packages=find_packages(exclude=("tests")),
-    url='https://github.com/futurecolors/django-webperf',
+    url='https://github.com/coagulant/django-webperf',
     license='MIT',
     description="A collection of stuff to improve django web performance.",
     long_description=read(path.join(path.dirname(__file__), 'README.rst')),
