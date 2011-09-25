@@ -36,3 +36,11 @@ class DomainShardingTestCase(TestCase):
         instance.file.name = 'files/example.jpg'
 
         self.assertEqual(instance.file.url, 'http://img1.example.com/media/files/example.jpg')
+
+
+class DomainShardingNotConfiguredTestCase(TestCase):
+
+    def test_not_configured(self):
+        storage = DomainShardingStorage()
+        url = storage.url('images/example.jpg')
+        self.assertEqual(url, 'images/example.jpg')
