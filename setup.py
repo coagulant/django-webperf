@@ -24,6 +24,7 @@ setup(
         "django-appconf==0.4.1"
     ],
     tests_require=tests_require,
+    test_suite = "runtests",
     extras_require={'test': tests_require},
     classifiers = [
         'Framework :: Django',
