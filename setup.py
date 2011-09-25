@@ -11,7 +11,7 @@ tests_require = [
 
 setup(
     name='django-webperf',
-    version='0.1',
+    version='0.2dev',
     author='Ilya Baryshev',
     author_email='baryshev@gmail.com',
     packages=find_packages(exclude=("tests")),
