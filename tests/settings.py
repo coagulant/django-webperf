@@ -3,7 +3,7 @@ import os
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 SITE_ID = 1
-PROJECT_APPS = ('web_performance',)
+PROJECT_APPS = ('web_performance', 'test_app')
 INSTALLED_APPS = ( 'django.contrib.auth',
                    'django.contrib.contenttypes',
                    'django.contrib.sessions',
