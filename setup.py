@@ -20,6 +20,9 @@ setup(
     license='MIT',
     description="A collection of stuff to improve django web performance.",
     long_description=open('README.rst').read(),
+    install_requires=[
+        "django-appconf==0.4.1"
+    ],
     tests_require=tests_require,
     extras_require={'test': tests_require},
     classifiers = [
