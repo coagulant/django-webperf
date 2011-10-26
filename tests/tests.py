@@ -5,8 +5,21 @@ from django.test.client import RequestFactory
 from django.utils.cache import get_cache_key, _generate_cache_header_key
 from mock import patch
 from models import Example1, Example2
-from web_performance.cache import FetchFromCacheMiddleware
+from web_performance.cache import FetchFromCacheMiddleware, remove_fetch_middleware
 from web_performance.storage import DomainShardingStorage
+
+class UpdateCacheMiddlewareTestCase(TestCase):
+    middleware_classes = ('web_perfomance.cache.UpdateCacheMiddleware',
+                          'django.middleware.common.CommonMiddleware',
+                          'web_perfomance.cache.FetchFromCacheMiddleware')
+
+    @patch.object(settings, 'MIDDLEWARE_CLASSES', middleware_classes)
+    def test_remove_fetch_middleware(self):
+        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_perfomance.cache.UpdateCacheMiddleware'), 0)
+        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_perfomance.cache.FetchFromCacheMiddleware'), 2)
+        remove_fetch_middleware()
+        self.assertTrue('web_perfomance.cache.UpdateCacheMiddleware' not in settings.MIDDLEWARE_CLASSES)
+        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_perfomance.cache.FetchFromCacheMiddleware'), 1)
 
 
 class FetchFromCacheMiddlewareTestCase(TestCase):
