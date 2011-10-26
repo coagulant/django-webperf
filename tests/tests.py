@@ -5,21 +5,35 @@ from django.test.client import RequestFactory
 from django.utils.cache import get_cache_key, _generate_cache_header_key
 from mock import patch
 from models import Example1, Example2
-from web_performance.cache import FetchFromCacheMiddleware, remove_fetch_middleware
+from web_performance.cache import FetchFromCacheMiddleware, remove_fetch_middleware, update_cache
 from web_performance.storage import DomainShardingStorage
 
 class UpdateCacheMiddlewareTestCase(TestCase):
-    middleware_classes = ('web_perfomance.cache.UpdateCacheMiddleware',
+    middleware_classes = ('web_performance.cache.UpdateCacheMiddleware',
                           'django.middleware.common.CommonMiddleware',
-                          'web_perfomance.cache.FetchFromCacheMiddleware')
+                          'web_performance.cache.FetchFromCacheMiddleware')
 
     @patch.object(settings, 'MIDDLEWARE_CLASSES', middleware_classes)
     def test_remove_fetch_middleware(self):
-        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_perfomance.cache.UpdateCacheMiddleware'), 0)
-        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_perfomance.cache.FetchFromCacheMiddleware'), 2)
+        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_performance.cache.UpdateCacheMiddleware'), 0)
+        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_performance.cache.FetchFromCacheMiddleware'), 2)
         remove_fetch_middleware()
-        self.assertTrue('web_perfomance.cache.UpdateCacheMiddleware' not in settings.MIDDLEWARE_CLASSES)
-        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_perfomance.cache.FetchFromCacheMiddleware'), 1)
+        self.assertTrue('web_performance.cache.FetchFromCacheMiddleware' not in settings.MIDDLEWARE_CLASSES)
+        self.assertEqual(settings.MIDDLEWARE_CLASSES.index('web_performance.cache.UpdateCacheMiddleware'), 0)
+
+    @patch.object(settings, 'MIDDLEWARE_CLASSES', middleware_classes)
+    def test_update_cache(self):
+        cache = get_cache(settings.CACHE_MIDDLEWARE_ALIAS)
+        cache.clear()
+        request = RequestFactory().get('/')
+        cache_header_key = _generate_cache_header_key(settings.CACHE_MIDDLEWARE_KEY_PREFIX, request)
+        cache.set(cache_header_key, 'header dummy cache', 30)
+        cache_key = get_cache_key(request,
+                                  settings.CACHE_MIDDLEWARE_KEY_PREFIX, 'GET',
+                                  cache=cache)
+        self.assertEqual(cache.get(cache_key), None, 'Cache is empty')
+        update_cache('/')
+        self.assertNotEqual(cache.get(cache_key), None, 'Cache is not empty')
 
 
 class FetchFromCacheMiddlewareTestCase(TestCase):

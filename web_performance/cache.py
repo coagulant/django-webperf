@@ -1,12 +1,12 @@
 from django.conf import settings
 from django.middleware.cache import FetchFromCacheMiddleware, UpdateCacheMiddleware
 from django.test.client import Client
-from django.utils.cache import get_cache_key
+from django.utils.cache import get_cache_key, get_max_age, patch_response_headers, learn_cache_key
 
 def remove_fetch_middleware():
     """ We can remove this middleware safely as it works only as process_request
     """
-    fetch_from_cache_middleware = 'web_perfomance.cache.UpdateCacheMiddleware'
+    fetch_from_cache_middleware = 'web_performance.cache.FetchFromCacheMiddleware'
     middleware_classes = list(settings.MIDDLEWARE_CLASSES)
     if fetch_from_cache_middleware in middleware_classes:
         middleware_classes.remove(fetch_from_cache_middleware)
@@ -14,18 +14,18 @@ def remove_fetch_middleware():
 
 def update_cache(url, **options):
     """ Warm up cache or update it before there is a cache miss"""
-    remove_fetch_middleware()
+#    remove_fetch_middleware()
 
     client = Client(WEBPERF_FORCE_CACHE_UPDATE=True, **options)
-#    client.handler._cache_update_cache = True
+    client.handler._cache_update_cache = True
     response = client.get(url)
-    response.render()
+    if hasattr(response, 'render'):
+        response.render()
 
 
 class UpdateCacheMiddleware(UpdateCacheMiddleware):
     """ Webperf version of django standard middleware
     """
-
 
 class FetchFromCacheMiddleware(FetchFromCacheMiddleware):
     """ Webperf version of django standard middleware
