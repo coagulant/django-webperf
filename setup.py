@@ -26,7 +26,7 @@ setup(
     test_suite = "runtests",
     extras_require={'test': tests_require},
     classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 7 - Inactive',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
